@@ -1,0 +1,22 @@
+# Local configuration and runtime data
+.env
+.env.*
+!.env.example
+logs/
+*.log
+*credentials*
+*secrets*
+.venv/
+.toolchain/
+__pycache__/
+*.py[cod]
+node_modules/
+build/
+.DS_Store
+Thumbs.db
+# Local CAD working files; publish only the curated STL design folders.
+components/
+renders/
+design/*/
+!design/cardboard-camera/
+!design/fit-checks/

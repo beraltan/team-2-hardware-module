@@ -8,6 +8,8 @@ String setupSSID, setupPassword, setupToken, candidateSSID, candidatePassword;
 String setupState="idle", setupMessage="Enter the venue Wi-Fi details.";
 uint32_t connectionStarted=0, retryAt=0;
 bool candidatePending=false, stationAllowed=true;
+bool candidateSharing=false;
+String candidateChannel="OOCSI-things/team-2";
 volatile uint32_t portalServicedAt=0;
 
 bool setupLocal() { return setupServer.client().localIP()==WiFi.softAPIP(); }
@@ -17,11 +19,8 @@ void setupJSON(int code, JsonDocument& data) {
   setupServer.send(code,"application/json",body);
 }
 void beginSetupPortal() {
-  uint64_t mac=ESP.getEfuseMac();
-  char suffix[7];snprintf(suffix,sizeof(suffix),"%06lx",(unsigned long)(mac&0xffffff));
-  setupSSID=String("Team2-Camera-")+suffix;
-  setupPassword=prefs.getString("ap_password","");
-  if(setupPassword.length()<12){char p[17];snprintf(p,sizeof(p),"%08lx%08lx",(unsigned long)esp_random(),(unsigned long)esp_random());setupPassword=p;prefs.putString("ap_password",p);}
+  setupSSID="team2-radar";
+  setupPassword="aqswdefr";
   char t[17];snprintf(t,sizeof(t),"%08lx%08lx",(unsigned long)esp_random(),(unsigned long)esp_random());setupToken=t;
   WiFi.persistent(false);WiFi.mode(WIFI_AP_STA);
   WiFi.softAPConfig(IPAddress(192,168,4,1),IPAddress(192,168,4,1),IPAddress(255,255,255,0));
@@ -51,7 +50,12 @@ void beginSetupPortal() {
     if(!s.length()||s.length()>32||(p.length()>0&&p.length()<8)||p.length()>64||(p.length()==64&&!hex)){
       d.clear();d["error"]="Use a 1–32 byte SSID and an 8–63 character password (or leave blank for an open network).";setupJSON(400,d);return;
     }
-    // Provisioning never enables public transmission, including an old saved opt-in.
+    String channel=d["channel"] | "OOCSI-things/team-2";
+    bool channelOK=channel.length()>0 && channel.length()<sizeof(teamChannel);
+    for(unsigned int i=0;i<channel.length();i++)if(!isalnum((unsigned char)channel[i])&&channel[i]!='/'&&channel[i]!='_'&&channel[i]!='-')channelOK=false;
+    if(!channelOK){d.clear();d["error"]="Use letters, digits, /, _ or - for the channel.";setupJSON(400,d);return;}
+    candidateChannel=channel;candidateSharing=d["enabled"] | false;
+    // Stop sharing until the new connection succeeds; the form explicitly opts in.
     netEnabled=false;prefs.putBool("enabled",false);
     candidateSSID=s;candidatePassword=p;candidatePending=true;stationAllowed=true;
     setupState="connecting";setupMessage="Connecting to the venue network…";connectionStarted=millis();
@@ -70,14 +74,16 @@ void serviceSetupPortal() {
     if(WiFi.status()==WL_CONNECTED && WiFi.SSID()==candidateSSID){
       prefs.putString("ssid",candidateSSID);prefs.putString("password",candidatePassword);prefs.putBool("wifi_on",true);
       strlcpy(wifiSSID,candidateSSID.c_str(),sizeof(wifiSSID));strlcpy(wifiPassword,candidatePassword.c_str(),sizeof(wifiPassword));
-      candidatePassword="";candidatePending=false;setupState="connected";setupMessage="Connected. Credentials saved. Public sharing is off. You can now leave the camera Wi-Fi.";
+      strlcpy(teamChannel,candidateChannel.c_str(),sizeof(teamChannel));prefs.putString("channel",candidateChannel);
+      netEnabled=candidateSharing;prefs.putBool("enabled",candidateSharing);
+      candidatePassword="";candidatePending=false;setupState="connected";setupMessage=netEnabled?"Connected. Credentials saved. OOCSI sharing enabled.":"Connected. Credentials saved. Public sharing is off.";
     }else if(millis()-connectionStarted>30000){
       WiFi.disconnect();candidatePassword="";candidatePending=false;setupState="failed";setupMessage="Could not connect. Check the password, 2.4 GHz coverage and external antenna, then try again.";
       retryAt=millis();
     }
   }else if(stationAllowed&&strlen(wifiSSID)&&WiFi.status()!=WL_CONNECTED&&millis()-retryAt>15000){retryAt=millis();WiFi.begin(wifiSSID,wifiPassword);}
   if(!candidatePending&&setupState!="failed"){
-    if(WiFi.status()==WL_CONNECTED){setupState="connected";setupMessage=netEnabled?"Connected. Public OOCSI sharing was separately enabled.":"Connected. Public sharing is off. You can now leave the camera Wi-Fi.";}
+    if(WiFi.status()==WL_CONNECTED){setupState="connected";setupMessage=netEnabled?"Connected. Public OOCSI sharing is enabled.":"Connected. Public sharing is off. You can now leave the camera Wi-Fi.";}
     else if(strlen(wifiSSID)&&stationAllowed){setupState="reconnecting";setupMessage="Trying the saved venue network. Enter new details below if needed.";}
   }
 }

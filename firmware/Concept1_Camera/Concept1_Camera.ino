@@ -6,9 +6,12 @@
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <Preferences.h>
+#ifndef TEAM2_SIMULATION
+#define TEAM2_SIMULATION 0
+#endif
 
 struct Target { int x, y, speed, resolution; bool present; };
-struct Reading { Target targets[3]; bool valid; int x,y,count; uint32_t seq,frame,ms; };
+struct Reading { Target targets[3]; bool valid; int x,y,count; uint32_t seq,frame,ms; char led[16]; };
 portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 Reading shared = {};
 char guideState[12]="stop";
@@ -22,6 +25,8 @@ uint8_t frameBuffer[30]; size_t used=0;
 Target latest[3] = {};
 uint32_t frames=0, lastFrameAt=0, sequence=0;
 String serialLine;
+float simX=-1100,simY=1800;
+bool simManual=false;
 Preferences prefs;
 #include "wifi_setup.h"
 
@@ -30,6 +35,9 @@ int signedValue(const uint8_t*p) { int v=word(p); return (v&0x8000)?(v&0x7fff):-
 
 void heartbeat(JsonVariantConst d) {
   if(!d["toktik_beat"].is<uint32_t>() || !d["toktik_state"].is<const char*>()) return;
+  const char* selected=d["toktik_camera"] | "";
+  String ownHandle=String(TEAM2_SIMULATION?"team2_camera_SIMULATED_":"team2_camera_")+bootID;
+  if(*selected && ownHandle!=selected)return;
   const char* s=d["toktik_state"]; const char* session=d["toktik_session"] | "";
   if(!*session || strlen(session)>=sizeof(gameSession)) return;
   if(strcmp(s,"idle")&&strcmp(s,"running")&&strcmp(s,"won")&&strcmp(s,"lost")&&strcmp(s,"fault")) return;
@@ -53,10 +61,31 @@ void serialCommand() {
       StaticJsonDocument<2048> d;
       if(!deserializeJson(d,serialLine)) {
         const char* command=d["command"] | "";
+        if(TEAM2_SIMULATION && !strcmp(command,"sim_move") && d["dx"].is<int>() && d["dy"].is<int>()) {
+          simManual=true;
+          simX=constrain(simX+constrain(d["dx"].as<int>(),-3000,3000),-1400.0f,1400.0f);
+          simY=constrain(simY+constrain(d["dy"].as<int>(),-3000,3000),1600.0f,3400.0f);
+        }
+        if(TEAM2_SIMULATION && !strcmp(command,"sim_reset")){simX=-1100;simY=1800;simManual=true;}
+        if(TEAM2_SIMULATION && !strcmp(command,"sim_control"))simManual=strcmp(d["mode"] | "manual","guidance")!=0;
         if(!strcmp(command,"setup_info")) {
           StaticJsonDocument<256> info;info["type"]="setup";info["ssid"]=setupSSID;info["password"]=setupPassword;info["url"]="http://192.168.4.1";serializeJson(info,Serial);Serial.println();
         }
         if(!strcmp(command,"heartbeat")) heartbeat(d.as<JsonVariantConst>());
+        if(!strcmp(command,"oocsi_config")) {
+          const char* channel=d["channel"] | "";
+          bool enabled=d["enabled"] | false;
+          bool channelOK=strlen(channel)>0 && strlen(channel)<sizeof(teamChannel);
+          for(const char* p=channel;*p;p++) if((unsigned char)*p<=32) channelOK=false;
+          if(!channelOK || (enabled && !strlen(wifiSSID))) {
+            Serial.println("{\"type\":\"config\",\"saved\":false,\"error\":\"Set venue Wi-Fi first and provide a valid channel\"}");
+          } else {
+            prefs.putString("channel",channel);prefs.putBool("enabled",enabled);
+            if(enabled)prefs.putBool("wifi_on",true);
+            Serial.println("{\"type\":\"config\",\"saved\":true,\"restarting\":true}");
+            Serial.flush();delay(100);ESP.restart();
+          }
+        }
         if(!strcmp(command,"wifi_config")) {
           const char* ssid=d["ssid"] | ""; const char* password=d["password"] | "";
           const char* channel=d["channel"] | "";
@@ -88,6 +117,11 @@ void radarRead() {
 }
 
 void payload(JsonDocument& d, const Reading&r) {
+  d["led"]=r.led;
+  d["led_report_kind"]=TEAM2_SIMULATION?"simulated":"commanded";
+  d["simulated"]=bool(TEAM2_SIMULATION);
+  if(TEAM2_SIMULATION)d["simulation_control"]=simManual?"serial":"guidance";
+  d["device_name"]=TEAM2_SIMULATION?"Team 2 SIMULATED Camera":"Team 2 Radar Camera";
   d["guidance_supported"]=true;
   d["type"]="radar"; d["radar_boot"]=bootID; d["radar_seq"]=r.seq; d["radar_frame"]=r.frame;
   d["radar_device_ms"]=r.ms; d["radar_valid"]=r.valid; d["radar_x_mm"]=r.x; d["radar_y_mm"]=r.y; d["radar_target_count"]=r.count;
@@ -98,7 +132,7 @@ void networkTask(void*) {
   beginSetupPortal();
   WiFiClient client; client.setTimeout(1000);
   String input; uint32_t lastTry=0, sentSeq=0, lastByte=millis(); bool greeted=false;
-  String handle=String("team2_camera_")+bootID;
+  String handle=String(TEAM2_SIMULATION?"team2_camera_SIMULATED_":"team2_camera_")+bootID;
   while(true) {
     serviceSetupPortal();
     if(!netEnabled){netConnected=false;client.stop();greeted=false;vTaskDelay(pdMS_TO_TICKS(10));continue;}
@@ -134,7 +168,8 @@ void networkTask(void*) {
 }
 
 void setup() {
-  Serial.begin(115200); Serial1.setRxBufferSize(2048); Serial1.begin(256000,SERIAL_8N1,20,21);
+  Serial.setTxBufferSize(4096);Serial.begin(115200);Serial.setTxTimeoutMs(0);
+  Serial1.setRxBufferSize(2048); Serial1.begin(256000,SERIAL_8N1,20,21);
   pinMode(2,OUTPUT);pinMode(3,OUTPUT);pinMode(4,OUTPUT);
   digitalWrite(2,LOW);digitalWrite(3,LOW);digitalWrite(4,LOW);
   snprintf(bootID,sizeof(bootID),"%08lx",(unsigned long)esp_random());
@@ -148,6 +183,28 @@ void setup() {
 
 void loop() {
   radarRead(); serialCommand(); uint32_t now=millis(); static uint32_t lastPublish=0;
+  if(TEAM2_SIMULATION) {
+    static uint32_t prior=0;static bool wasIdle=true;
+    float dt=prior?min(uint32_t(now-prior),uint32_t(100))/1000.0f:0;prior=now;
+    char simState[12],simGuide[12];bool fresh;
+    portENTER_CRITICAL(&mutex);
+    strlcpy(simState,gameState,sizeof(simState));strlcpy(simGuide,guideState,sizeof(simGuide));
+    fresh=haveHeartbeat && now-heartbeatAt<2000;
+    portEXIT_CRITICAL(&mutex);
+    bool idle=!strcmp(simState,"idle");
+    if(idle&&!wasIdle&&!simManual){simX=-1100;simY=1800;}wasIdle=idle;
+    if(!simManual && fresh && !strcmp(simState,"running")) {
+      // Match the HTML's player-facing-camera convention.
+      if(!strcmp(simGuide,"left"))simX+=350*dt;
+      if(!strcmp(simGuide,"right"))simX-=350*dt;
+      if(!strcmp(simGuide,"forward"))simY-=350*dt;
+      if(!strcmp(simGuide,"back"))simY+=350*dt;
+    }
+    simX=constrain(simX,-1400.0f,1400.0f);simY=constrain(simY,1600.0f,3400.0f);
+    latest[0]={int(simX),int(simY),0,0,true};latest[1]={};latest[2]={};
+    if(now-lastPublish>=200)frames++;
+    lastFrameAt=now;
+  }
   bool valid=frames && now-lastFrameAt<400; int count=0,x=0,y=0;
   for(auto&t:latest) if(valid&&t.present&&t.x>=-1500&&t.x<=1500&&t.y>=1500&&t.y<=4500) {count++;x=t.x;y=t.y;}
   valid=valid&&count==1;
@@ -162,9 +219,10 @@ void loop() {
   int phase=cueAge%2000; bool on=phase<pulses*300 && phase%300<150;
   bool blue=green&&pulses>0&&pulses<=2&&on;
   bool forwardGreen=green&&pulses>=3&&on;
-  digitalWrite(2,(flash||(green&&pulses==0))?HIGH:LOW);digitalWrite(3,(flash||forwardGreen)?HIGH:LOW);digitalWrite(4,blue?HIGH:LOW);
+  digitalWrite(2,!TEAM2_SIMULATION&&(flash||(green&&pulses==0))?HIGH:LOW);digitalWrite(3,!TEAM2_SIMULATION&&(flash||forwardGreen)?HIGH:LOW);digitalWrite(4,!TEAM2_SIMULATION&&blue?HIGH:LOW);
   if(now-lastPublish>=200) {
     lastPublish=now; Reading r={}; memcpy(r.targets,latest,sizeof(latest));r.valid=valid;r.x=valid?x:0;r.y=valid?y:0;r.count=count;r.seq=++sequence;r.frame=frames;r.ms=now;
+    strlcpy(r.led,green?guide:amber?"fault-amber":"off",sizeof(r.led));
     portENTER_CRITICAL(&mutex);shared=r;portEXIT_CRITICAL(&mutex);
     StaticJsonDocument<2048> d;payload(d,r);d["wifi_enabled"]=stationAllowed&&strlen(wifiSSID);d["oocsi_enabled"]=netEnabled;d["oocsi_connected"]=netConnected;d["wifi_connected"]=WiFi.status()==WL_CONNECTED;d["setup_ssid"]=setupSSID;
     d["wifi_ip"]=WiFi.localIP().toString();d["wifi_gateway"]=WiFi.gatewayIP().toString();d["wifi_rssi_dbm"]=WiFi.RSSI();d["portal_age_ms"]=now-portalServicedAt;
@@ -172,7 +230,10 @@ void loop() {
     JsonArray a=d.createNestedArray("targets");
     if(frames&&now-lastFrameAt<400) for(int i=0;i<3;i++) if(latest[i].present){JsonObject t=a.createNestedObject();t["id"]=i+1;t["x"]=latest[i].x;t["y"]=latest[i].y;t["speed"]=latest[i].speed;t["resolution"]=latest[i].resolution;}
     // USB CDC can disappear without blocking sensor/LED work indefinitely.
-    if(Serial && Serial.availableForWrite()>0){serializeJson(d,Serial);Serial.println();}
+    // Queue a complete line or skip it: character-by-character writes can stall
+    // sampling when USB is plugged in but no serial monitor is draining it.
+    char line[2048];size_t length=serializeJson(d,line,sizeof(line)-1);line[length++]='\n';
+    if(Serial && Serial.availableForWrite()>=int(length))Serial.write((const uint8_t*)line,length);
   }
   delay(1);
 }

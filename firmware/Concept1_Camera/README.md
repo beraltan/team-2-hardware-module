@@ -37,6 +37,14 @@ bash firmware/Concept1_Camera/flash-mac.sh /dev/cu.usbmodemYOUR_PORT
 
 Replace the example port with the one listed for your board. This helper explicitly builds real sensor mode. Mac instructions are based on the official tools; compilation/flashing was tested on Windows, not on a Mac.
 
+## Verify the build and troubleshoot
+
+1. **Check tracking.** Open the paired controller, choose the camera's team/channel and select the discovered camera. Walk to known positions and confirm that the displayed dot follows left/right and near/far movement. Repeat with the finished front cover and cardboard shell in place. This is a functional check, not a measurement of position accuracy.
+2. **Check the physical LED.** Start an active round with valid tracking, then send a guidance cue and watch the actual LED. The LED is deliberately off while idle or without fresh control/tracking; darkness in those states is not itself a fault. A reported LED command describes the firmware's commanded output and does not prove that the LED is physically illuminated.
+3. **If the camera is not discovered,** check its 2.4 GHz venue Wi-Fi connection, public OOCSI sharing and the selected team. Camera and browser must use exactly the same channel; Team 2 uses `OOCSI-things/team-2`. Keep one game controller tab connected and active.
+4. **If the camera is discovered but no position appears,** power down and inspect the radar's 5V supply, common ground and crossed UART connections: radar **TX → XIAO D7/GPIO20 (RX)** and radar **RX → XIAO D6/GPIO21 (TX)**. Reconnect power and inspect USB diagnostics at **115200 baud**: `simulated` must be `false`, and `radar_frame` should increase. The radar UART itself runs at **256000 baud**. If frames remain absent, use the [USB-only radar diagnostic](../../challenge-2/firmware/LD2450_USB_Test/).
+5. **If tracking works but a guidance cue does not light the LED,** confirm that the round is active, tracking is valid and the browser is still sending a fresh heartbeat. Power down before checking the common cathode to GND and the three colour leads, each through its own resistor, to D0/D1/D2. Identify the purchased LED's lead order rather than assuming it from appearance.
+
 ## Simulator without attached components
 
 Compile with `--build-property compiler.cpp.extra_flags=-DTEAM2_SIMULATION=1` to emulate a camera without the LD2450 or RGB LED. Ordinary builds default to real sensor mode. The simulator advertises as `team2_camera_SIMULATED_<boot ID>` and marks every sample `simulated: true`. It starts at X=-1100, Y=1800 mm and responds to game guidance at 350 mm/s while the round is running. Left increases X, right decreases X, forward decreases Y, and back increases Y, matching the HTML's player-facing-camera convention. Stop or a stale controller heartbeat stops movement. Reset to idle returns to the starting position. This tests communications and game logic, not physical sensing or LED operation.

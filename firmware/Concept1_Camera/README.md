@@ -4,9 +4,9 @@ Open Concept1_Camera.ino with both headers in this folder. Board: Seeed Studio X
 
 The firmware reads LD2450 UART at 256000 8N1 and outputs USB JSON at 5 Hz. Venue Wi-Fi credentials are entered through the local setup portal and stored on the device, not in source. The setup AP is named `team2-radar`, with password `aqswdefr`. Join it, then open http://192.168.4.1. Choose Team 1-20 (or Custom channel) on that page and tick Enable public OOCSI camera sharing to appear in the matching game. Sharing is opt-in and starts only after the new venue Wi-Fi connection succeeds. Failed credentials are not saved.
 
-Production firmware was compiled, flashed and flash-verified on a XIAO ESP32-C3 on 1 October 2026. USB confirmed simulation off and a working Wi-Fi/OOCSI connection. No radar frames were arriving during that check; physical sensor wiring, tracking and LED patterns still need testing. The LD2450_USB_Test sketch is a minimal diagnostic alternative.
+Production firmware was compiled, flashed and flash-verified on a XIAO ESP32-C3 on 1 October 2026. That check confirmed simulation off and Wi-Fi/OOCSI but received no radar frames. On 28 October the builder confirmed working camera tracking and RGB feedback after replacing the radar damaged by a fall on presentation day. This is user-reported functional evidence, not a new measurement of latency or position accuracy. A USB-only diagnostic is available in [the heist package](../../challenge-2/firmware/LD2450_USB_Test/).
 
-See the repository README for wiring, build instructions and the paired software module.
+See the [assembly guide](../../docs/BUILD_GUIDE.md) for wiring and the [paired software module](https://github.com/beraltan/team-2-software-module) for the controller. This portal firmware remains separate from the [shared-config heist snapshot](../../challenge-2/).
 
 ## Flash from a Mac
 

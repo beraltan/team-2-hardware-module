@@ -1,11 +1,26 @@
 # Hardware/software interface
 
-USB: newline-delimited JSON, serial monitor setting 115200, 5 Hz output. Firmware reads radar UART at 256000 baud. X/Y are millimetres from the radar origin; +Y points forward. Verify X polarity by walking a known point.
+The browser runs the game. Devices exchange messages on **OOCSI-things/team-2** at **oocsi.id.tue.nl** (TCP 4444 for the firmware, WebSocket `/ws` for the browser). Choose the same team/channel everywhere and use one live crew controller. The [full contract](https://github.com/beraltan/team-2-software-module/blob/main/docs/INTERFACE.md) covers all puzzles and the vault.
 
-Hardware → software: radar_seq, radar_boot, radar_valid, radar_x_mm, radar_y_mm; USB diagnostic messages also include all target slots. Treat invalid, stale or ambiguous observations as unsuitable for game decisions. No real sample recordings are included.
+## Camera
 
-Software → hardware: heartbeat with toktik_session, toktik_beat, toktik_state and toktik_guide (left/right/forward/back/stop). Guidance expires after one second; missing heartbeat faults after two seconds. Check the actual firmware/parser source for complete fields.
+LD2450 UART: **256000 baud, 8N1**. USB: **115200 baud**, newline-delimited JSON at 5 Hz. Position is Cartesian millimetres from the radar origin; +Y points forward. Walk a known point to verify X polarity.
 
-Default optional OOCSI channel: OOCSI-things/team-2-bank-heist on oocsi.id.tue.nl. Both sides must use the same channel. The software is game authority; do not run competing authorities on one channel. Public networking is opt-in and is not enabled by cloning or running tests.
+Camera → browser includes `radar_seq`, `radar_boot`, `radar_valid`, `radar_x_mm`, `radar_y_mm` and `guidance_supported`. The original portal firmware also sends `led` and `led_report_kind: commanded`; that describes commanded electrical output, not optical confirmation. The browser can still display “Not reported over OOCSI” because the saved controller does not render that field. USB diagnostics can include all target slots. Reject stale, invalid or ambiguous tracking for game decisions.
 
-LED prototype: left blue one pulse, right blue two, forward green three, back green four; stop steady red; amber fault indication. Physical cue interpretation remains to be tested with player pairs.
+Browser → camera heartbeats include `toktik_session`, `toktik_beat`, `toktik_state`, `toktik_guide` and `toktik_camera`. Browser guidance has a one-second hold deadline. Firmware stops applying guidance when the controller heartbeat is two seconds old; it also requires valid, fresh single-target tracking. These are separate deadlines.
+
+| Direction | LED cue |
+| --- | --- |
+| Left | Blue, one pulse |
+| Right | Blue, two pulses |
+| Forward | Green, three pulses |
+| Back | Green, four pulses |
+| Stop | Steady red during valid, controlled play |
+| Fault / idle | Blinking amber / off |
+
+## Complete heist
+
+The current software follows **camera → Skidule → Morse → laser → vault release → escape**. A ten-minute shared clock and anomaly count span the run. `heist_navigation_complete` marks entry completion; `toktik_state: won` means the completed return, rather than camera arrival. The automatic vault requires all four completion flags and the escape phase, with a fresh controller lease.
+
+The [heist firmware package](../challenge-2/) includes the exact saved board targets, Wi-Fi build configuration, laser circuit and two vault arrangements. Original camera provisioning remains available in [firmware/Concept1_Camera](../firmware/Concept1_Camera/). The shared-config camera is a separate build and does not run that portal.

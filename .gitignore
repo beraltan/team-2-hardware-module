@@ -20,3 +20,12 @@ renders/
 design/*/
 !design/cardboard-camera/
 !design/fit-checks/
+!design/potentiometer-knobs/
+
+# Generated heist Wi-Fi configuration and firmware can contain credentials.
+challenge-2/config/wifi.json
+challenge-2/build/
+*.bin
+*.elf
+*.map
+*.zip

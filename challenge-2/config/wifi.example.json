@@ -1,0 +1,6 @@
+{
+  "ssid": "YOUR_WIFI_NAME",
+  "password": "YOUR_WIFI_PASSWORD",
+  "oocsi_server": "oocsi.id.tue.nl",
+  "team_channel": "OOCSI-things/team-2"
+}

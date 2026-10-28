@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="780" height="345" preserveAspectRatio="xMinYMin meet" viewBox="0 0 780 345" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="780" height="345"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-345)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="780" height="345" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 40,315 L 740,315 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 2;"/>
+			<text x="40" y="327" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(73%,20%,20%); stroke:none;" transform="translate(0,654) scale(1,-1)">VBUS / 5V - from the XIAO USB-C supply</text>
+			<path d="M 40,30 L 740,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 2;"/>
+			<text x="40" y="12" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(21%,27%,29%); stroke:none;" transform="translate(0,24) scale(1,-1)">COMMON GND - receiver, divider, button, laser and ESP share this rail</text>
+			<rect x="300" y="75" width="180" height="210" style="stroke: rgb(9%,20%,16%); stroke-linecap: butt; stroke-width: 1.3; fill: rgb(94%,96%,94%); fill-rule: evenodd;"/>
+			<text x="310" y="265" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,530) scale(1,-1)">U1 / XIAO ESP32-C3</text>
+			<text x="315" y="245" style="font-family: Helvetica; font-size: 10px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,490) scale(1,-1)">USB-C: laptop / charger</text>
+			<text x="315" y="229" style="font-family: Helvetica; font-size: 10px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,458) scale(1,-1)">or USB power bank</text>
+			<text x="315" y="199" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,398) scale(1,-1)">D1 / GPIO3  (INPUT)</text>
+			<text x="315" y="147" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(58%,43%,11%); stroke:none;" transform="translate(0,294) scale(1,-1)">D4 / GPIO6</text>
+			<text x="315" y="110" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,220) scale(1,-1)">3V3: leave unconnected</text>
+			<text x="315" y="92" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(21%,27%,29%); stroke:none;" transform="translate(0,184) scale(1,-1)">GND</text>
+			<text x="430" y="266" style="font-family: Helvetica-Bold; font-size: 9px;fill: rgb(73%,20%,20%); stroke:none;" transform="translate(0,532) scale(1,-1)">VBUS</text>
+			<path d="M 480,270 L 510,270 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 510,270 L 510,315 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="510" cy="315" r="3" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1; fill: rgb(73%,20%,20%); fill-rule: evenodd;"/>
+			<path d="M 480,95 L 510,95 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 510,95 L 510,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="510" cy="30" r="3" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1; fill: rgb(21%,27%,29%); fill-rule: evenodd;"/>
+			<rect x="40" y="170" width="130" height="115" style="stroke: rgb(9%,20%,16%); stroke-linecap: butt; stroke-width: 1.3; fill: rgb(94%,96%,94%); fill-rule: evenodd;"/>
+			<text x="50" y="265" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,530) scale(1,-1)">U2 / receiver</text>
+			<text x="50" y="248" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,496) scale(1,-1)">REDLASERSENSOR</text>
+			<text x="50" y="234" style="font-family: Helvetica; font-size: 8px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,468) scale(1,-1)">VCC=5V, OUT=0/5V</text>
+			<text x="117" y="211" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,422) scale(1,-1)">OUT</text>
+			<text x="55" y="178" style="font-family: Helvetica; font-size: 9px;fill: rgb(21%,27%,29%); stroke:none;" transform="translate(0,356) scale(1,-1)">GND</text>
+			<text x="55" y="290" style="font-family: Helvetica; font-size: 8px;fill: rgb(73%,20%,20%); stroke:none;" transform="translate(0,580) scale(1,-1)">VCC</text>
+			<path d="M 90,285 L 90,315 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="90" cy="315" r="3" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1; fill: rgb(73%,20%,20%); fill-rule: evenodd;"/>
+			<path d="M 90,170 L 90,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="90" cy="30" r="3" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1; fill: rgb(21%,27%,29%); fill-rule: evenodd;"/>
+			<path d="M 170,215 L 200,215 Z" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<rect x="200" y="210" width="45" height="10" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1.5; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 245,215 L 300,215 Z" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="275" cy="215" r="3" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,42%,60%); fill-rule: evenodd;"/>
+			<text x="193" y="234" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,468) scale(1,-1)">R1  10 kOhm</text>
+			<text x="270" y="249" style="font-family: Helvetica-Bold; font-size: 9px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,498) scale(1,-1)">J1</text>
+			<text x="183" y="188" style="font-family: Helvetica; font-size: 9px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,376) scale(1,-1)">0 / ~3.0V</text>
+			<path d="M 275,215 L 275,150 Z" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<rect x="270" y="110" width="10" height="40" style="stroke: rgb(7%,42%,60%); stroke-linecap: butt; stroke-width: 1.5; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 275,110 L 275,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="275" cy="30" r="3" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1; fill: rgb(21%,27%,29%); fill-rule: evenodd;"/>
+			<text x="183" y="132" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(7%,42%,60%); stroke:none;" transform="translate(0,264) scale(1,-1)">R2  15 kOhm</text>
+			<path d="M 220,315 L 220,283 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 208,283 L 232,283 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 208,276 L 232,276 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 220,276 L 220,262 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 208,262 L 232,262 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 212,257 L 228,257 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 216,252 L 224,252 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<text x="235" y="285" style="font-family: Helvetica; font-size: 8px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,570) scale(1,-1)">C1 100 nF</text>
+			<text x="235" y="272" style="font-family: Helvetica; font-size: 8px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,544) scale(1,-1)">near receiver</text>
+			<rect x="590" y="205" width="150" height="80" style="stroke: rgb(9%,20%,16%); stroke-linecap: butt; stroke-width: 1.3; fill: rgb(94%,96%,94%); fill-rule: evenodd;"/>
+			<text x="600" y="265" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,530) scale(1,-1)">L1 / 5V laser</text>
+			<text x="600" y="244" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,488) scale(1,-1)">continuous USB power</text>
+			<text x="600" y="225" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,450) scale(1,-1)">~25 mA; see pin note</text>
+			<path d="M 645,285 L 645,315 Z" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="645" cy="315" r="3" style="stroke: rgb(73%,20%,20%); stroke-linecap: butt; stroke-width: 1; fill: rgb(73%,20%,20%); fill-rule: evenodd;"/>
+			<text x="650" y="292" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(73%,20%,20%); stroke:none;" transform="translate(0,584) scale(1,-1)">+</text>
+			<path d="M 730,205 L 730,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="730" cy="30" r="3" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1; fill: rgb(21%,27%,29%); fill-rule: evenodd;"/>
+			<text x="713" y="190" style="font-family: Helvetica-Bold; font-size: 11px;fill: rgb(21%,27%,29%); stroke:none;" transform="translate(0,380) scale(1,-1)">-</text>
+			<path d="M 480,155 L 600,155 Z" style="stroke: rgb(58%,43%,11%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="600" cy="155" r="3" style="stroke: rgb(58%,43%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="635" cy="155" r="3" style="stroke: rgb(58%,43%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 600,159 L 630,174 Z" style="stroke: rgb(58%,43%,11%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 638,155 L 690,155 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<path d="M 690,155 L 690,30 Z" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1.5;"/>
+			<circle cx="690" cy="30" r="3" style="stroke: rgb(21%,27%,29%); stroke-linecap: butt; stroke-width: 1; fill: rgb(21%,27%,29%); fill-rule: evenodd;"/>
+			<text x="546" y="185" style="font-family: Helvetica-Bold; font-size: 10px;fill: rgb(58%,43%,11%); stroke:none;" transform="translate(0,370) scale(1,-1)">SW1 / FINISH</text>
+			<text x="546" y="128" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,256) scale(1,-1)">Normally open switch</text>
+			<text x="546" y="113" style="font-family: Helvetica; font-size: 9px;fill: rgb(9%,20%,16%); stroke:none;" transform="translate(0,226) scale(1,-1)">D4 uses INPUT_PULLUP</text>
+		</g>
+	</g>
+</svg>

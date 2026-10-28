@@ -1,0 +1,13 @@
+# One local Wi-Fi file. Never commit credentials or firmware containing them.
+config/wifi.json
+build/
+artifacts/
+*.bin
+*.elf
+*.map
+*.zip
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

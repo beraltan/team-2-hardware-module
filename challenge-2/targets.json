@@ -1,10 +1,6 @@
 [
-  {"name":"camera","sketch":"Concept1_Camera","fqbn":"esp32:esp32:XIAO_ESP32C3:CDCOnBoot=default","wifi":true},
   {"name":"skidule","sketch":"Skidule_Controls","fqbn":"esp32:esp32:XIAO_ESP32C6:CDCOnBoot=cdc","wifi":true},
   {"name":"morse","sketch":"Morse_Button","fqbn":"esp32:esp32:XIAO_ESP32C6:CDCOnBoot=cdc","wifi":true},
   {"name":"laser","sketch":"Laser_Grid","fqbn":"esp32:esp32:XIAO_ESP32C3:CDCOnBoot=default","wifi":true},
-  {"name":"vault-direct","sketch":"Vault_ESP32S3_Direct","fqbn":"esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi","wifi":true},
-  {"name":"vault-bridge","sketch":"Vault_ESP32S3_Bridge","fqbn":"esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi","wifi":true},
-  {"name":"radar-test","sketch":"LD2450_USB_Test","fqbn":"esp32:esp32:XIAO_ESP32C3:CDCOnBoot=default","wifi":false},
-  {"name":"uno","sketch":"Vault_Arduino_Uno","fqbn":"arduino:avr:uno","wifi":false}
+  {"name":"vault-direct","sketch":"Vault_ESP32S3_Direct","fqbn":"esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi","wifi":true}
 ]

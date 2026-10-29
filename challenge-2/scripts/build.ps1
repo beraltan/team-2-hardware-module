@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('all','camera','skidule','morse','laser','vault-direct','vault-bridge','radar-test','uno')]
+  [ValidateSet('all','skidule','morse','laser','vault-direct')]
   [string]$Module = 'all',
   [string]$Cli = 'arduino-cli',
   [string]$ArduinoConfig = '',
@@ -11,7 +11,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $configPath = Join-Path $repoRoot 'config\wifi.json'
 $targets = Get-Content -LiteralPath (Join-Path $repoRoot 'targets.json') -Raw | ConvertFrom-Json
-$selected = @($targets | Where-Object { ($Module -eq 'all' -and $_.name -ne 'uno') -or $_.name -eq $Module })
+$selected = @($targets | Where-Object { $Module -eq 'all' -or $_.name -eq $Module })
 $needsWifi = @($selected | Where-Object { $_.wifi }).Count -gt 0
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
@@ -53,7 +53,7 @@ foreach ($target in $selected) {
   $sketchPath = Join-Path $repoRoot ('firmware\' + $target.sketch)
   $buildPath = Join-Path $repoRoot ('build\' + $target.name)
   $cliArgs = @('compile','--fqbn',$target.fqbn,'--build-path',$buildPath)
-  if ($target.name -ne 'uno') { $cliArgs += @('--library',$libraryRoot) }
+  $cliArgs += @('--library',$libraryRoot)
   if ($ArduinoConfig) { $cliArgs += @('--config-file',$ArduinoConfig) }
   if ($Libraries) { $cliArgs += @('--libraries',$Libraries) }
   $cliArgs += $sketchPath

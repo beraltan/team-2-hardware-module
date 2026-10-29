@@ -1,52 +1,25 @@
-# Team 2 — Hardware module: radar camera
+# Build the hardware
 
-Position-sensing camera prop for the Bank Heist connected experience. An LD2450 radar and XIAO ESP32-C3 send player positions; an RGB LED receives navigator guidance. The visible enclosure is cardboard, with printed internal mounts and a front head.
+[Wiring and parts](PINOUTS.md) · [Software setup](https://github.com/beraltan/team-2-software-module/blob/main/docs/DIY.md)
 
-**Software module:** https://github.com/beraltan/team-2-software-module
+## Camera
 
-The battery and power-bank assembly are optional: you can power the module through the XIAO's USB-C port instead. Skip the battery fit test and installation if using external USB power.
+You need an LD2450, XIAO ESP32-C3, common-cathode RGB LED, three 220 Ω resistors, wire, USB power and cardboard. A USB power bank is optional; the sled fits the measured 96.65 × 24.91 × 22.23 mm case.
 
-The outer shell is entirely up to your group. Be creative with its shape, materials, colours and decoration; the cardboard camera in the video is one example. Keep the radar's sensing area, LED, cables and power connection clear when designing your shell.
+1. Print the four [camera parts](../design/cardboard-camera/) in their supplied orientations. We used recycled PLA, three walls and 7% infill. Check the [radar Fit F](../design/fit-checks/LD2450%20Fit%20F.stl), [ESP holder](../design/fit-checks/ESP%20Holder%20Fit%20Test.stl) and optional [battery clip](../design/fit-checks/Battery%20Clip%20Fit%20Test.stl) samples first. Inspect the catches in the slicer and support them if needed.
+2. With the head detached, seat the XIAO headers-up and lower the ESP lock vertically. Fit the optional assembled power bank between its retaining clips and stops.
+3. Slide the radar holder sideways onto the sled's dovetail. Insert the LD2450 along its PCB channels, sensing face towards the cover. Fit the LED and [wire the components](PINOUTS.md#camera--xiao-esp32-c3), keeping wires clear of the joints.
+4. Slide the front cover into its guides until the top and lower catches engage. The cover also retains the head-to-sled joint. To disassemble, release the top and lower tabs, remove the cover, then slide the head off.
+5. Make your own shell around the assembly. Leave the LED, USB/charging port and release tabs accessible. Check radar tracking through the finished cover before securing the shell.
+6. [Flash and configure the camera](../firmware/Concept1_Camera/README.md), then choose the same team in the browser application.
 
-## Contents
+The production radar holder uses Fit F; older fit variants are omitted. The final meshes were checked for rigid interference, but printed fit and tracking through the 4 mm cover depend on the printer and filament. Use the coupons before printing full parts.
 
-- [Cardboard camera STL files](../design/cardboard-camera): Electronics Sled, Radar Holder, ESP Lock and Front Cover.
-- Print the [ESP holder fit test](../design/fit-checks/ESP%20Holder%20Fit%20Test.stl) with the [ESP lock](../design/cardboard-camera/ESP%20Lock.stl), and the [battery clip fit test](../design/fit-checks/Battery%20Clip%20Fit%20Test.stl) before the complete sled. The [retention revision](RETENTION_REVISION.md) adds top/bottom latch and dovetail fit samples.
-- [Camera firmware](../firmware/Concept1_Camera/README.md): UART sensing, USB JSON, Wi-Fi setup and optional OOCSI.
-- firmware/LD2450_USB_Test: minimal radar wiring test.
-- [Shared interface](INTERFACE.md).
+## Other modules
 
-## Parts and wiring
+- **Morse:** mount the button through a cardboard panel with backing so it cannot be pushed inside. Connect it to the C6 using the [pin table](PINOUTS.md#morse--xiao-esp32-c6).
+- **Skidule:** mount the 10 kΩ rotary pot, slider and confirmation button with backing. [Knob STLs](../design/potentiometer-knobs/) are included. Check full travel and button retention before closing the panel.
+- **Laser:** fix the emitter and mirror mounts around the opening so the reflected beam ends at the receiver. Put the finish button inside. Align below eye level with a backstop; use the browser's Laser alignment view, then check cuts and finish presses. [C6 build status and C3 alternative](PINOUTS.md#laser--final-c6-and-archived-c3-alternative).
+- **Vault:** reuse a box for the door and mount the two servo horns/linkage. Check direction and travel with the mechanism detached before attaching it. Run Test lock/unlock, then return to Automatic.
 
-| Part | Quantity / connection |
-| --- | --- |
-| HLK-LD2450 | 1; 5V and GND; TX to XIAO D7, RX to D6 |
-| Seeed XIAO ESP32-C3 | 1; headers upward in the printed well |
-| Common-cathode 5 mm RGB LED | 1; R→D0, G→D1, B→D2, cathode→GND |
-| LED resistors | One per colour; select for the purchased LED forward voltage/current at 3.3V |
-| Optional USB power-bank case and battery | 96.65 × 24.91 × 22.23 mm, with purchased compatible cell; omit for external USB power |
-| Printed joints | Screw-free head-to-sled dovetail and sliding front cover with release detent |
-| Shell materials | Your group's choice; cardboard is used in the example |
-
-Power down before wiring; verify the actual LED lead order. Do not connect two independent 5V sources together. Use the assembled power-bank electronics for battery charging; do not connect the bare cell to the XIAO 5V pin.
-
-## Assemble and run
-
-1. Print the fit-check STLs, inspect sliced layers and check the purchased parts.
-2. Import the four production STLs into Bambu Studio in millimetres, keeping their supplied print orientations. Use the sled underside, holder backplate, end stop flat face and cover front face on the bed. PLA is suitable for initial indoor fit checks. Slice for your printer and filament.
-3. Slide the XIAO into its well with the head detached and headers upward, then lower the ESP lock vertically into its slot. If using a battery, seat the power bank between its retaining clips and end stops. Slide the head onto the transverse dovetail, then insert the radar from the open end of its PCB channels toward the fixed stop. Fit the LED and route insulated leads clear of joints.
-4. Slide the front cover onto its two guides until the top catch and both bottom catches seat. The rear notch captures the head-to-sled dovetail. To remove it, lift the roof tab and gently pull both lower tabs outward before withdrawing the cover; do not force the retaining shoulders past their seats. Fit your group's shell; leave access to all release tabs, USB and, if fitted, the charging port.
-5. Follow the [Mac / Arduino flashing instructions](../firmware/Concept1_Camera/README.md#flash-from-a-mac) to upload the real camera firmware.
-6. Join the camera setup hotspot, enter venue Wi-Fi, select your team and enable OOCSI sharing. Open the paired Bank Heist HTML, choose the same team and select the camera. Verify coordinates, LED behaviour and tracking through the finished cover before a game. USB is optional during play; it can supply power.
-
-## CAD and verification status
-
-The final Radar Holder now uses **Fit F**: 0.05 mm nominal clearance at each PCB side and 0.05 mm above the nominal 1.6 mm PCB. [Print the Fit F sample](../design/fit-checks/LD2450%20Fit%20F.stl) using your final filament/settings. This change only requires reprinting the holder. It was applied to the local production mesh in Blender; the online Onshape document has not been updated. All four final meshes are connected and watertight; assembled holder/sled/cover and six sampled sliding positions showed no interference. The full-length tight fit still requires physical verification.
-
-The latest [R3 joint revision](JOINT_REVISION_R3.md) tightens the cover tongue notch to 0.08 mm and the dovetail to 0.10 mm nominal clearance, and adds a closed-end side stop. Insert and remove the sled through the open side; fit the cover after seating against the stop. The R2 sled and ESP lock can be reused with the R3 holder and cover.
-
-Design downloads are STL files only. Use all four production parts together. The head slides sideways onto the sled dovetail; the front cover captures the joint and prevents sideways release. Remove the cover before sliding the head off.
-
-The retention revision has four connected, watertight print meshes. Sampled CAD travel checks found no rigid interference for the ESP lock, head dovetail or cover guides; flexible catches intentionally contact during insertion. An unreleased cover encounters its retaining shoulders after 0.15 mm of travel, and a 0.6 mm withdrawal check confirms interference. The assembled exported meshes have zero pairwise overlap between the sled, holder and cover. The new retaining shoulders and PCB fingers create ten faces flagged by the 45-degree overhang audit: inspect these in the slicer and use localized support where needed. See [revision details and fit samples](RETENTION_REVISION.md). These checks do not establish physical strength, spring fatigue, RF transmission or printed fit. Test the small coupons before full parts. The 4 mm radar cover needs testing with the actual filament; the revised fits are not yet physically validated.
-
-Team 2: Anouk Kramer, Alp Altaner, Berk Eraltan Sönmezgil, Sebastiaan Schenk.
+[Build and upload the other firmware](../challenge-2/README.md). In the browser, check every module in **Test your module**, then rehearse the complete camera → Skidule → Morse → laser → vault → escape sequence and reset.
